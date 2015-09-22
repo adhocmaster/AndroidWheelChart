@@ -425,7 +425,6 @@ public class WheelChartView extends View {
         cpaint.setStyle(Paint.Style.FILL);
         cpaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-
         float baseX;
         float baseY;
         float angle;
@@ -478,6 +477,8 @@ public class WheelChartView extends View {
         }
 
     }
+
+    //This function may need improvement as getX and getY may return event's absolute positing in the window.
 
     public void UpdateWithMouseEvent(MotionEvent event){
 
