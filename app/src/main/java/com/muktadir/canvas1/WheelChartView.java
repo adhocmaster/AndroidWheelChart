@@ -12,9 +12,6 @@ import android.view.View;
 
 import java.util.Arrays;
 
-/**
- * Created by Sirajul on 9/22/2015.
- */
 public class WheelChartView extends View {
 
     public static final String TAG = "WheelChartView:";
@@ -35,6 +32,8 @@ public class WheelChartView extends View {
 
     private int []chosenLevels;
 
+    private String []lineTitles;
+
     private float sectionAngle = 0;
 
     private String bgColor = "#FF000000"; //opaque black
@@ -53,20 +52,34 @@ public class WheelChartView extends View {
     private String centerColor = "#FF7eb240";
     private float centerRadius = 10f;
 
+    private float maxWheelSize = 0;
+
 
     public WheelChartView(Context context) {
         super(context);
         chosenLevels = new int[lines];
+        lineTitles = new String[lines];
     }
 
     public WheelChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
         chosenLevels = new int[lines];
+        lineTitles = new String[lines];
     }
 
     public WheelChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         chosenLevels = new int[lines];
+        lineTitles = new String[lines];
+    }
+
+    public void populateTestTitles()
+    {
+        for(int i=0; i< lineTitles.length; ++i){
+
+            lineTitles[i] = "Title " + i;
+
+        }
     }
 
     public float getCurX() {
@@ -109,6 +122,22 @@ public class WheelChartView extends View {
         this.chosenLevels = chosenLevels;
     }
 
+    public String[] getLineTitles() {
+        return lineTitles;
+    }
+
+    public void setLineTitles(String[] lineTitles) {
+        this.lineTitles = lineTitles;
+    }
+
+    public float getMaxWheelSize() {
+        return maxWheelSize;
+    }
+
+    public void setMaxWheelSize(float maxWheelSize) {
+        this.maxWheelSize = maxWheelSize;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -145,8 +174,8 @@ public class WheelChartView extends View {
 
         }
 
-        float baseX = cX;
-        float baseY = cY - gutter * 5;
+        float baseX;
+        float baseY;
 
         cpaint.setStrokeWidth(lineStrokeWidth);
         cpaint.setColor(Color.parseColor(lineColor));
@@ -211,6 +240,8 @@ public class WheelChartView extends View {
 
         canvas.drawCircle(cX, cY, centerRadius, cpaint);
 
+        updateTitles(canvas, cpaint);
+
     }
 
     public void updatePolygon(int lineNo, Canvas canvas, Paint cpaint)
@@ -269,11 +300,73 @@ public class WheelChartView extends View {
             maxRadius = height / 2;
 
         }
+
+        if(maxWheelSize > 0) if(maxRadius * 2 > maxWheelSize) maxRadius = maxWheelSize / 2;
+
     }
 
     public void updateGutter() // must be called after maxRadius is set
     {
         gutter = maxRadius/(circles+1);
+    }
+
+    public void updateTitles(Canvas canvas, Paint cpaint){
+
+        cpaint.setTextSize(12);
+        cpaint.setStyle(Paint.Style.FILL);
+
+
+        float baseX;
+        float baseY;
+        float angle;
+        float tolerance = (float) (Math.PI / (lines *10));
+
+        float distance;
+
+        for(int i = 0; i<lines; ++i){
+
+            angle = sectionAngle * i;
+
+            distance = gutter * circles + cpaint.getTextSize();
+
+            baseX = (float) (cX + distance * Math.cos(angle));
+            baseY = (float) (cY + distance * Math.sin(angle));
+
+            if(Math.abs(angle -  (Math.PI / 2)) < tolerance) {
+
+                cpaint.setTextAlign(Paint.Align.CENTER);
+
+                baseY += cpaint.getTextSize()/2;
+
+
+            }else if(Math.abs(angle -  (Math.PI * 3 / 2)) < tolerance){
+
+                cpaint.setTextAlign(Paint.Align.CENTER);
+
+
+            }else if((angle > Math.PI / 2) && (angle < Math.PI * 3 / 2)) {
+
+                cpaint.setTextAlign(Paint.Align.RIGHT);
+
+                baseY += cpaint.getTextSize()/3;
+
+            } else {
+
+                cpaint.setTextAlign(Paint.Align.LEFT);
+
+                baseY += cpaint.getTextSize()/3;
+
+            }
+
+
+
+            if(lineTitles[i] == null)
+                canvas.drawText("Title " + i, baseX, baseY, cpaint);
+            else
+                canvas.drawText(lineTitles[i], baseX, baseY, cpaint);
+
+        }
+
     }
 
     public void UpdateWithMouseEvent(MotionEvent event){

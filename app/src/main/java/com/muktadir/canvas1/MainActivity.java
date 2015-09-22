@@ -27,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
         wheelChartView = (WheelChartView) findViewById(R.id.myView);
 
         wheelChartView.setChosenLevels(chosenLevels);
+//        wheelChartView.populateTestTitles();
+
+        wheelChartView.setMaxWheelSize(300f);
 
         wheelChartView.setOnTouchListener(new View.OnTouchListener() {
             @Override
