@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -51,6 +52,9 @@ public class WheelChartView extends View {
 
     private String centerColor = "#FF7eb240";
     private float centerRadius = 10f;
+
+    private String labelColor = "#FFBBBBBB";
+    private float labelSize = 12;
 
     private float maxWheelSize = 0;
 
@@ -136,6 +140,110 @@ public class WheelChartView extends View {
 
     public void setMaxWheelSize(float maxWheelSize) {
         this.maxWheelSize = maxWheelSize;
+    }
+
+    public String getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public String getCenterColor() {
+        return centerColor;
+    }
+
+    public void setCenterColor(String centerColor) {
+        this.centerColor = centerColor;
+    }
+
+    public float getCenterRadius() {
+        return centerRadius;
+    }
+
+    public void setCenterRadius(float centerRadius) {
+        this.centerRadius = centerRadius;
+    }
+
+    public String getCircleColor() {
+        return circleColor;
+    }
+
+    public void setCircleColor(String circleColor) {
+        this.circleColor = circleColor;
+    }
+
+    public float getCircleStrokeWidth() {
+        return circleStrokeWidth;
+    }
+
+    public void setCircleStrokeWidth(float circleStrokeWidth) {
+        this.circleStrokeWidth = circleStrokeWidth;
+    }
+
+    public String getLineColor() {
+        return lineColor;
+    }
+
+    public void setLineColor(String lineColor) {
+        this.lineColor = lineColor;
+    }
+
+    public float getLineStrokeWidth() {
+        return lineStrokeWidth;
+    }
+
+    public void setLineStrokeWidth(float lineStrokeWidth) {
+        this.lineStrokeWidth = lineStrokeWidth;
+    }
+
+    public float getPointRadius() {
+        return pointRadius;
+    }
+
+    public void setPointRadius(float pointRadius) {
+        this.pointRadius = pointRadius;
+    }
+
+    public float getPointStrokeWidth() {
+        return pointStrokeWidth;
+    }
+
+    public void setPointStrokeWidth(float pointStrokeWidth) {
+        this.pointStrokeWidth = pointStrokeWidth;
+    }
+
+    public String getPolyColor() {
+        return polyColor;
+    }
+
+    public void setPolyColor(String polyColor) {
+        this.polyColor = polyColor;
+    }
+
+    public float getPolyStrokeWidth() {
+        return polyStrokeWidth;
+    }
+
+    public void setPolyStrokeWidth(float polyStrokeWidth) {
+        this.polyStrokeWidth = polyStrokeWidth;
+    }
+
+    public String getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(String labelColor) {
+        this.labelColor = labelColor;
+    }
+
+    public float getLabelSize() {
+        return labelSize;
+    }
+
+    public void setLabelSize(float labelSize) {
+        this.labelSize = labelSize;
     }
 
     @Override
@@ -312,8 +420,10 @@ public class WheelChartView extends View {
 
     public void updateTitles(Canvas canvas, Paint cpaint){
 
-        cpaint.setTextSize(12);
+        cpaint.setTextSize(labelSize);
+        cpaint.setColor(Color.parseColor(labelColor));
         cpaint.setStyle(Paint.Style.FILL);
+        cpaint.setTypeface(Typeface.DEFAULT_BOLD);
 
 
         float baseX;
