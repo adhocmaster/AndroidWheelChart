@@ -31,7 +31,7 @@ public class WheelChartView extends View {
     private int lines = 16;
     private int circles = 5;
 
-    private int []chosenLevels;
+    private int []chosenLevels; //holds chosen circle number for each line
 
     private String []lineTitles;
 
@@ -56,7 +56,12 @@ public class WheelChartView extends View {
     private String labelColor = "#FFBBBBBB";
     private float labelSize = 12;
 
+    private String chosenLabelColor = "#FF7eb240";
+    private float chosenLabelSize = 18;
+
     private float maxWheelSize = 0;
+
+    private int chosenLineNo = -1;
 
 
     public WheelChartView(Context context) {
@@ -246,6 +251,30 @@ public class WheelChartView extends View {
         this.labelSize = labelSize;
     }
 
+    public String getChosenLabelColor() {
+        return chosenLabelColor;
+    }
+
+    public void setChosenLabelColor(String chosenLabelColor) {
+        this.chosenLabelColor = chosenLabelColor;
+    }
+
+    public float getChosenLabelSize() {
+        return chosenLabelSize;
+    }
+
+    public void setChosenLabelSize(float chosenLabelSize) {
+        this.chosenLabelSize = chosenLabelSize;
+    }
+
+    public int getChosenLineNo() {
+        return chosenLineNo;
+    }
+
+    public void setChosenLineNo(int chosenLineNo) {
+        this.chosenLineNo = chosenLineNo;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -296,8 +325,11 @@ public class WheelChartView extends View {
 
         }
         //not yet clicked any where\
+        //chosen Point holds the selectable point on the wheel nearest the clicked point
+
         float chosenPointX = 0;
         float chosenPointY = 0;
+
         if(curX > 0){
             //canvas.drawLine(cX, cY, curX, curY, cpaint);
 
@@ -315,6 +347,8 @@ public class WheelChartView extends View {
 
 
             chosenLevels[lineNo] = circleNo;
+
+            chosenLineNo = lineNo;
 
         }
 
@@ -348,7 +382,7 @@ public class WheelChartView extends View {
 
         canvas.drawCircle(cX, cY, centerRadius, cpaint);
 
-        updateTitles(canvas, cpaint);
+        updateTitles(canvas, cpaint, chosenLineNo);
 
     }
 
@@ -418,12 +452,7 @@ public class WheelChartView extends View {
         gutter = maxRadius/(circles+1);
     }
 
-    public void updateTitles(Canvas canvas, Paint cpaint){
-
-        cpaint.setTextSize(labelSize);
-        cpaint.setColor(Color.parseColor(labelColor));
-        cpaint.setStyle(Paint.Style.FILL);
-        cpaint.setTypeface(Typeface.DEFAULT_BOLD);
+    public void updateTitles(Canvas canvas, Paint cpaint, int chosenLineNo){
 
         float baseX;
         float baseY;
@@ -432,7 +461,26 @@ public class WheelChartView extends View {
 
         float distance;
 
+//        Log.e(TAG, "Chosen line no " + String.valueOf(chosenLineNo));
+
         for(int i = 0; i<lines; ++i){
+
+
+            if(chosenLineNo == i){
+
+                cpaint.setTextSize(chosenLabelSize);
+                cpaint.setColor(Color.parseColor(chosenLabelColor));
+                cpaint.setStyle(Paint.Style.FILL);
+                cpaint.setTypeface(Typeface.DEFAULT_BOLD);
+
+            } else {
+
+                cpaint.setTextSize(labelSize);
+                cpaint.setColor(Color.parseColor(labelColor));
+                cpaint.setStyle(Paint.Style.FILL);
+                cpaint.setTypeface(Typeface.DEFAULT_BOLD);
+
+            }
 
             angle = sectionAngle * i;
 

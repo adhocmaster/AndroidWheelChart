@@ -32,19 +32,22 @@ public class MainActivity extends AppCompatActivity {
         wheelChartView.setMaxWheelSize(300f);
 
         wheelChartView.setOnTouchListener(new View.OnTouchListener() {
+            
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
 
                 wheelChartView.UpdateWithMouseEvent(event);
 
                 wheelChartView.performClick();
 
                 return true;
+
             }
+
         });
 
         wheelChartView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
@@ -54,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
                         String.valueOf(wheelChartView.getLeft()) + "x" + String.valueOf(wheelChartView.getTop()));
 
                 wheelChartView.invalidate();
+
             }
+
         });
 
 
