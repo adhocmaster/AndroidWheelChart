@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.Arrays;
 
@@ -54,14 +55,17 @@ public class WheelChartView extends View {
     private float centerRadius = 10f;
 
     private String labelColor = "#FFBBBBBB";
-    private float labelSize = 12;
+    private float labelSize = 11;
 
     private String chosenLabelColor = "#FF7eb240";
-    private float chosenLabelSize = 18;
+    private float chosenLabelSize = 13;
 
     private float maxWheelSize = 0;
 
     private int chosenLineNo = -1;
+
+
+    private float padding = 20; // in dp
 
 
     public WheelChartView(Context context) {
@@ -144,7 +148,9 @@ public class WheelChartView extends View {
     }
 
     public void setMaxWheelSize(float maxWheelSize) {
+
         this.maxWheelSize = maxWheelSize;
+        // should we invalidate width?
     }
 
     public String getBgColor() {
@@ -275,6 +281,81 @@ public class WheelChartView extends View {
         this.chosenLineNo = chosenLineNo;
     }
 
+    public float getPadding() {
+        return padding;
+    }
+
+    public void setPadding(float padding) {
+        this.padding = padding;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+//        Log.e(TAG, "widthMeasureSpec " + String.valueOf(MeasureSpec.getSize(widthMeasureSpec)));
+//
+//        Log.e(TAG, "heightMeasureSpec " + String.valueOf(MeasureSpec.getSize(heightMeasureSpec)));
+//
+//        Log.e(TAG, "widthMeasureSpec Mode" + String.valueOf(MeasureSpec.getMode(widthMeasureSpec)));
+//
+//        Log.e(TAG, "heightMeasureSpec Mode" + String.valueOf(MeasureSpec.getMode(heightMeasureSpec)));
+
+        int maxWidth = MeasureSpec.getSize(widthMeasureSpec);
+
+        int maxHeight = MeasureSpec.getSize(heightMeasureSpec);
+
+
+        int width = 400;
+
+        if(getLayoutParams().width== ViewGroup.LayoutParams.WRAP_CONTENT) {
+
+            if(MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED && width > maxWidth){
+
+                width = maxWidth;
+
+            }
+
+        } else if((getLayoutParams().width== ViewGroup.LayoutParams.MATCH_PARENT)
+                ||
+                (getLayoutParams().width== ViewGroup.LayoutParams.FILL_PARENT)) {
+
+            width = MeasureSpec.getSize(widthMeasureSpec);
+
+        } else {
+
+            width = getLayoutParams().width;
+
+        }
+
+        int height = 400;
+
+        if(getLayoutParams().height==ViewGroup.LayoutParams.WRAP_CONTENT) {
+
+            if(MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.UNSPECIFIED && height > maxHeight){
+
+                height = maxHeight;
+
+            }
+
+        } else if((getLayoutParams().height==ViewGroup.LayoutParams.MATCH_PARENT)
+                ||
+                (getLayoutParams().height==ViewGroup.LayoutParams.FILL_PARENT)) {
+
+            height = MeasureSpec.getSize(heightMeasureSpec);
+
+        }
+        else {
+
+            height = getLayoutParams().height;
+
+        }
+
+        setMeasuredDimension(width|MeasureSpec.EXACTLY, height|MeasureSpec.EXACTLY);
+
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -353,7 +434,6 @@ public class WheelChartView extends View {
         }
 
 
-
         Log.e(TAG, Arrays.toString(chosenLevels));
 
         cpaint.setStrokeWidth(polyStrokeWidth);
@@ -386,8 +466,7 @@ public class WheelChartView extends View {
 
     }
 
-    public void updatePolygon(int lineNo, Canvas canvas, Paint cpaint)
-    {
+    public void updatePolygon(int lineNo, Canvas canvas, Paint cpaint) {
 
         int pLineNo = lineNo - 1;
         int nLineNo = lineNo + 1;
@@ -409,8 +488,8 @@ public class WheelChartView extends View {
         canvas.drawLine(x, y, prevX, prevY, cpaint);
     }
 
-    public void iniMeasurement()
-    {
+    public void iniMeasurement() {
+
         width = this.getWidth();
         height = this.getHeight();
 
@@ -433,17 +512,26 @@ public class WheelChartView extends View {
 
     public void updateMaxRedius(){
 
-        if(width < height) {
+        //check if there is a padding
 
-            maxRadius = width / 2;
+        float paddingPx = 2 * (padding * getContext().getResources().getDisplayMetrics().density + chosenLabelSize);
+
+        float maxAllowedWidth = width - paddingPx;
+
+        float maxAllowedHeight = height - paddingPx;
+
+        if(maxAllowedWidth < maxAllowedHeight) {
+
+            maxRadius = maxAllowedWidth / 2;
 
         } else {
 
-            maxRadius = height / 2;
+            maxRadius = maxAllowedHeight / 2;
 
         }
 
         if(maxWheelSize > 0) if(maxRadius * 2 > maxWheelSize) maxRadius = maxWheelSize / 2;
+
 
     }
 
@@ -461,6 +549,8 @@ public class WheelChartView extends View {
 
         float distance;
 
+        float scaledDensity = getContext().getResources().getDisplayMetrics().scaledDensity;
+
 //        Log.e(TAG, "Chosen line no " + String.valueOf(chosenLineNo));
 
         for(int i = 0; i<lines; ++i){
@@ -468,17 +558,17 @@ public class WheelChartView extends View {
 
             if(chosenLineNo == i){
 
-                cpaint.setTextSize(chosenLabelSize);
+                cpaint.setTextSize(chosenLabelSize * scaledDensity);
                 cpaint.setColor(Color.parseColor(chosenLabelColor));
                 cpaint.setStyle(Paint.Style.FILL);
                 cpaint.setTypeface(Typeface.DEFAULT_BOLD);
 
             } else {
 
-                cpaint.setTextSize(labelSize);
+                cpaint.setTextSize(labelSize * scaledDensity);
                 cpaint.setColor(Color.parseColor(labelColor));
                 cpaint.setStyle(Paint.Style.FILL);
-                cpaint.setTypeface(Typeface.DEFAULT_BOLD);
+                cpaint.setTypeface(Typeface.DEFAULT);
 
             }
 
